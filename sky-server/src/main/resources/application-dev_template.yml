@@ -1,0 +1,23 @@
+# application-dev.example.yml
+spring:
+  datasource:
+    druid:
+      url: jdbc:mysql://localhost:3306/sky_take_out
+      username: root
+      password: your-password
+
+sky:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    host: localhost
+    port: 3306
+    database: sky_take_out
+    username: root
+    password: your-password
+
+ALIOSS_ENDPOINT: oss-cn-beijing.aliyuncs.com
+ALIOSS_ACCESS_KEY_ID: your-key
+ALIOSS_ACCESS_KEY_SECRET: your-secret
+ALIOSS_BUCKET_NAME: your-bucket
+
+JWT_SECRET: your-jwt-secret
