@@ -14,6 +14,10 @@ sky:
     password: your-password
     database: 10
 
+  wechat:
+    appid: your-appid
+    secret: your-secret
+
 ALIOSS_ENDPOINT: oss-cn-beijing.aliyuncs.com
 ALIOSS_ACCESS_KEY_ID: your-key
 ALIOSS_ACCESS_KEY_SECRET: your-secret
