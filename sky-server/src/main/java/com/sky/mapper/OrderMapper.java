@@ -15,13 +15,9 @@ import java.util.List;
 
 @Mapper
 public interface OrderMapper {
-
     /**
      * 插入订单数据
      * @param order
      */
-    static void insert(Orders order) {
-    }
-
-
+    void insert(Orders order);
 }

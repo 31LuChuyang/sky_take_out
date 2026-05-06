@@ -79,25 +79,25 @@ public class OrderServiceImpl implements OrderService {
         }
 
         //二、构造订单数据
-        Orders orders = new Orders();
-        BeanUtils.copyProperties(ordersSubmitDTO,orders);
-        orders.setPhone(addressBook.getPhone());
-        orders.setConsignee(addressBook.getConsignee());
-        orders.setAddress(addressBook.getDetail());
-        orders.setUserId(userId);
-        orders.setNumber(String.valueOf(System.currentTimeMillis()));
-        orders.setStatus(Orders.PENDING_PAYMENT);
-        orders.setPayStatus(Orders.UN_PAID);
-        orders.setOrderTime(LocalDateTime.now());
+        Orders order = new Orders();
+        BeanUtils.copyProperties(ordersSubmitDTO,order);
+        order.setPhone(addressBook.getPhone());
+        order.setConsignee(addressBook.getConsignee());
+        order.setAddress(addressBook.getDetail());
+        order.setUserId(userId);
+        order.setNumber(String.valueOf(System.currentTimeMillis()));
+        order.setStatus(Orders.PENDING_PAYMENT);
+        order.setPayStatus(Orders.UN_PAID);
+        order.setOrderTime(LocalDateTime.now());
         //插入1条订单数据
-        OrderMapper.insert(orders);
+        orderMapper.insert(order);
 
         //订单明细数据
         List<OrderDetail> orderDetailList = new ArrayList<>();
         for (ShoppingCart cart : shoppingCartList) {
             OrderDetail orderDetail = new OrderDetail();//订单明细
             BeanUtils.copyProperties(cart,orderDetail);
-            orderDetail.setOrderId(orders.getId());//设置当前订单明细关联的订单
+            orderDetail.setOrderId(order.getId());//设置当前订单明细关联的订单
             orderDetailList.add(orderDetail);
         }
         //向明细表中插入n条数据
@@ -108,10 +108,10 @@ public class OrderServiceImpl implements OrderService {
         //封装VO返回结果
         OrderSubmitVO orderSubmitVO = OrderSubmitVO
                 .builder()
-                .id(orders.getId())
-                .orderTime(orders.getOrderTime())
-                .orderNumber(orders.getNumber())
-                .orderAmount(orders.getAmount())
+                .id(order.getId())
+                .orderTime(order.getOrderTime())
+                .orderNumber(order.getNumber())
+                .orderAmount(order.getAmount())
                 .build();
 
         return orderSubmitVO;
