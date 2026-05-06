@@ -43,7 +43,7 @@ public interface AddressBookMapper {
      * 根据 用户id 修改 "是否为默认地址"
      * @param addressBook
      */
-    @Update("update address_book set is_default = #{isDefault} where id = #{id}")
+    @Update("update address_book set is_default = #{isDefault} where user_id = #{userId}")
     void setIsDefaultByUserId(AddressBook addressBook);
 
     /**
@@ -52,6 +52,4 @@ public interface AddressBookMapper {
      */
     @Delete("delete from address_book where id = #{id}")
     void delete(Long id);
-
-
 }

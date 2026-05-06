@@ -99,7 +99,6 @@ public class AddressBookController {
 
     /**
      * 查询默认地址
-     * @return
      */
     @GetMapping("/default")
     @ApiOperation("查询默认地址")

@@ -51,7 +51,7 @@ public class AddressBookServiceImpl implements AddressBookService {
     }
 
     /**
-     * 很具id查询地址
+     * 根据id查询地址
      * @return
      */
     public AddressBook getById(Long id) {
@@ -89,6 +89,4 @@ public class AddressBookServiceImpl implements AddressBookService {
     public void delete(Long id) {
         addressBookMapper.delete(id);
     }
-
-
 }
