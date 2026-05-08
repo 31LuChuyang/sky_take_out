@@ -17,6 +17,13 @@ sky:
   wechat:
     appid: your-appid
     secret: your-secret
+    mchid:
+    mchSerialNo:
+    privateKeyFilePath:
+    apiV3Key:
+    weChatPayCertFilePath:
+    notifyUrl: https://www.weixin.qq.com/wxpay/pay.php
+    refundNotifyUrl: https://www.weixin.qq.com/wxpay/pay.php
 
 ALIOSS_ENDPOINT: oss-cn-beijing.aliyuncs.com
 ALIOSS_ACCESS_KEY_ID: your-key
