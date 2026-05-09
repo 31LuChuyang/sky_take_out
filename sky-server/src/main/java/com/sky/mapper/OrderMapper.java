@@ -1,16 +1,11 @@
 package com.sky.mapper;
 
-import com.github.pagehelper.Page;
-import com.sky.annotation.AutoFill;
-import com.sky.dto.DishPageQueryDTO;
-import com.sky.entity.Dish;
-import com.sky.entity.OrderDetail;
 import com.sky.entity.Orders;
-import com.sky.enumeration.OperationType;
-import com.sky.vo.DishVO;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Mapper
@@ -34,4 +29,14 @@ public interface OrderMapper {
      * @param orders
      */
     void update(Orders orders);
+
+
+    /**
+     * 根据订单状态和下单时间查询订单
+     * @param status
+     * @param localDateTime
+     * @return
+     */
+    @Select("select * from orders where status = #{status} and order_time < #{orderTime}")
+    List<Orders> getByStatusAndOrderTime(@Param("status")Integer status, @Param("orderTime")LocalDateTime localDateTime);
 }
