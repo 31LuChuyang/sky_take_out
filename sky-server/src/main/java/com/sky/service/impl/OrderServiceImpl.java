@@ -1,8 +1,10 @@
 package com.sky.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.sky.WebSocketServer.WebSocketServer;
 import com.sky.constant.MessageConstant;
 import com.sky.context.BaseContext;
 import com.sky.dto.OrdersPageQueryDTO;
@@ -29,7 +31,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -47,6 +51,8 @@ public class OrderServiceImpl implements OrderService {
     private UserMapper userMapper;
     @Autowired
     private WeChatPayUtil weChatPayUtil;
+    @Autowired
+    WebSocketServer webSocketServer;
 
     /**
      * 用户下单
@@ -96,7 +102,7 @@ public class OrderServiceImpl implements OrderService {
         order.setConsignee(addressBook.getConsignee());
         order.setAddress(addressBook.getDetail());
         order.setUserId(userId);
-        order.setNumber(String.valueOf(System.currentTimeMillis()));
+        order.setNumber(String.valueOf(System.currentTimeMillis()));//订单号，用时间戳，天然唯一
         order.setStatus(Orders.PENDING_PAYMENT);
         order.setPayStatus(Orders.UN_PAID);
         order.setOrderTime(LocalDateTime.now());
@@ -183,6 +189,14 @@ public class OrderServiceImpl implements OrderService {
                 .build();
 
         orderMapper.update(orders);
+        //通过Websocket推送消息 type orderId content
+        Map map=new HashMap();
+        map.put("type",1);
+        map.put("orderId",ordersDB.getId());
+        map.put("content","订单号"+outTradeNo);
+
+        String json = JSONObject.toJSONString(map);
+        webSocketServer.sendToAllClient(json);
     }
 
     /**
@@ -206,7 +220,7 @@ public class OrderServiceImpl implements OrderService {
         List<OrderVO> list = new ArrayList();
 
         //查询订单明细，并封装入OrderVO进行响应
-        if(page != null && page.size() > 0){
+        if(page != null && page.getTotal() > 0){//数据库总记录数>0
             for (Orders orders : page) {
                 Long orderId = orders.getId(); //订单id
                 //查询订单明细
@@ -238,8 +252,8 @@ public class OrderServiceImpl implements OrderService {
          List<OrderDetail> orderDetailList = orderDetailMapper.getByOrderId(orders.getId());
         //订单详情封装给orderVO
          OrderVO orderVO = new OrderVO();
-         BeanUtils.copyProperties(orderDetailList,orderVO);
-         //
+         BeanUtils.copyProperties(orders,orderVO);
+         orderVO.setOrderDetailList(orderDetailList);
         return orderVO;
     }
 
@@ -261,7 +275,7 @@ public class OrderServiceImpl implements OrderService {
             throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
         }
         Orders orders = new Orders();
-        orders.setUserId(ordersDB.getUserId());
+        orders.setId(ordersDB.getId());
         //订单处于待接单状态下取消，需要进行退款
         if(ordersDB.getStatus().equals(Orders.TO_BE_CONFIRMED)){
             //调用微信支付退款接口
@@ -289,7 +303,10 @@ public class OrderServiceImpl implements OrderService {
         //查询当前用户id
         Long userId = BaseContext.getCurrentId();
         //根据订单id查询当前订单详情
-        List<OrderDetail> orderDetailList = orderDetailMapper.getByOrderId(userId);
+        List<OrderDetail> orderDetailList = orderDetailMapper.getByOrderId(id);
+        if(orderDetailList == null || orderDetailList.isEmpty()){
+            throw new OrderBusinessException("订单详情为空");
+        }
         //订单详情对象转换为购物车对象
         List<ShoppingCart> shoppingCartList = orderDetailList.stream().map(x -> {
             ShoppingCart shoppingCart = new ShoppingCart();
@@ -302,5 +319,23 @@ public class OrderServiceImpl implements OrderService {
         }).collect(Collectors.toList());
         //将购物车对象批量添加到数据库中
         shoppingCartMapper.insertBatch(shoppingCartList);
+    }
+
+    /**
+     * 客户催单
+     * @param id
+     */
+    public void reminder(Long id) {
+        //查询订单是否存在
+        Orders orders = orderMapper.getById(id);
+        if(orders == null){
+            throw new OrderBusinessException(MessageConstant.ORDER_NOT_FOUND);
+        }
+        //基于Websocket实现催单
+        Map map = new HashMap();
+        map.put("type", 2);//2代表用户催单
+        map.put("orderId", id);
+        map.put("content", "订单号：" + orders.getNumber());
+        webSocketServer.sendToAllClient(JSON.toJSONString(map));
     }
 }

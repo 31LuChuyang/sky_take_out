@@ -1,5 +1,6 @@
 package com.sky.controller.user;
 
+import com.sky.WebSocketServer.WebSocketServer;
 import com.sky.constant.StatusConstant;
 import com.sky.dto.OrdersPaymentDTO;
 import com.sky.dto.OrdersSubmitDTO;
@@ -105,6 +106,19 @@ public class OrderController {
     @ApiOperation("再来一单")
     public Result repetition(@PathVariable Long id){
         orderService.repetition(id);
+        //System.out.println("接收到的id="+id);
+        return Result.success();
+    }
+
+    /**
+     * 客户催单
+     * @param id
+     * @return
+     */
+    @GetMapping("/reminder/{id}")
+    @ApiOperation("客户催单")
+    public Result reminder(@PathVariable Long id){
+        orderService.reminder(id);
         return Result.success();
     }
 }
