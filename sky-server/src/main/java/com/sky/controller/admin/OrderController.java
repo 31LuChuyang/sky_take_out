@@ -60,7 +60,7 @@ public class OrderController {
      * @param id
      * @return
      */
-    @GetMapping("/{id}")
+    @GetMapping("/details/{id}")
     @ApiOperation("查询订单详情")
     public Result<OrderVO> detail(@PathVariable("id") Long id){
         OrderVO orderVO = orderService.detail(id);
@@ -103,7 +103,7 @@ public class OrderController {
       * @param id
      * @return
      */
-    @PutMapping("/{id}")
+    @PutMapping("/delivery/{id}")
     @ApiOperation("派送订单")
     public Result delivery(@PathVariable("id") Long id){
         orderService.delivery(id);
@@ -115,7 +115,7 @@ public class OrderController {
       * @param id
      * @return
      */
-    @PutMapping("/{id}")
+    @PutMapping("/complete/{id}")
     @ApiOperation("完成订单")
     public Result complete(@PathVariable("id") Long id){
         orderService.complete(id);

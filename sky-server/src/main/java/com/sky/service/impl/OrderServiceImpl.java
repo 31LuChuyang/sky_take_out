@@ -358,7 +358,7 @@ public class OrderServiceImpl implements OrderService {
         //拿到当前页所有订单
         List<Orders> ordersList = page.getResult();
 
-        if (CollectionUtils.isEmpty(ordersList)) {
+        if (!CollectionUtils.isEmpty(ordersList)) {
             for(Orders orders : ordersList){
                 OrderVO orderVO = new OrderVO();
                 //一个对象的数据来自多张表，仅靠copyProperties远远不够，需要自己组装
@@ -463,6 +463,10 @@ public class OrderServiceImpl implements OrderService {
     public void cancel(OrdersCancelDTO ordersCancelDTO) throws Exception{
         //根据id查询订单
         Orders ordersDB = orderMapper.getById(ordersCancelDTO.getId());
+        //校验订单是否存在，或状态为 6-已完成
+        if(ordersDB == null || !ordersDB.getStatus().equals(Orders.CANCELLED)){
+            throw new OrderBusinessException(MessageConstant.ORDER_COMPLETED);
+        }
         //管理端取消订单需要退款，根据订单id更新订单状态、取消原因、取消时间
         Orders orders = new Orders();
         orders.setId(ordersDB.getId());
@@ -504,7 +508,7 @@ public class OrderServiceImpl implements OrderService {
         //更新订单状态,状态转为完成
         Orders orders = new Orders();
         orders.setId(ordersDB.getId());
-        orders.setStatus(Orders.CANCELLED);
+        orders.setStatus(Orders.COMPLETED);
         //更新数据库
         orderMapper.update(orders);
     }
