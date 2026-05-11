@@ -24,6 +24,10 @@ sky:
     weChatPayCertFilePath:
     notifyUrl: https://www.weixin.qq.com/wxpay/pay.php
     refundNotifyUrl: https://www.weixin.qq.com/wxpay/pay.php
+  shop:
+    address: your-address
+  baidu:
+    ak: your-ak
 
 ALIOSS_ENDPOINT: oss-cn-beijing.aliyuncs.com
 ALIOSS_ACCESS_KEY_ID: your-key
