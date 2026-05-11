@@ -9,7 +9,7 @@
     </insert>
     <select id="countByMap" resultType="java.lang.Integer">
         select count(id) from user
-        //这里idea爆红是因为无法提前知道map的键，但运行没有问题，将来开发需要减少使用map
+        /*这里idea爆红是因为无法提前知道map的键，但运行没有问题，将来开发需要减少使用map*/
         <where>
             <if test="begin != null">
                 and create_time &gt;= #{begin}

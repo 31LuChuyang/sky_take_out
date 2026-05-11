@@ -60,16 +60,16 @@
                 and status = #{status}
             </if>
             <if test="beginTime != null">
-                and order_time &gt;= #{orderTime}
+                and order_time &gt;= #{beginTime}
             </if>
             <if test="endTime != null">
-                and order_time &lt;= #{orderTime}
+                and order_time &lt;= #{endTime}
             </if>
         </where>
         order by order_time desc
     </select>
 
-    //这里idea爆红是因为无法提前知道map的键，但运行没有问题，将来开发需要减少使用map
+    <!--这里idea爆红是因为无法提前知道map的键，但运行没有问题，将来开发需要减少使用map-->
     <select id="sumByMap" resultType="java.lang.Double">
         select sum(amount) from orders
         <where>
@@ -97,5 +97,24 @@
                 and order_time &lt;= #{end}
             </if>
         </where>
+    </select>
+    <select id="getSalesTop10" resultType="com.sky.dto.GoodsSalesDTO">
+        select
+            od.name name,
+            sum(od.number) number
+        from order_detail od ,
+             orders o
+        where
+            od.order_id = o.id
+            and o.status = 5
+            <if test="beginTime != null">
+                and o.order_time &gt;= #{beginTime}
+            </if>
+            <if test="endTime != null">
+                and o.order_time &lt;= #{endTime}
+            </if>
+            group by od.name
+            order by number desc
+            limit 0,10
     </select>
 </mapper>
