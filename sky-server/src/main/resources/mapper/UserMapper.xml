@@ -7,4 +7,16 @@
         insert into user(openid, name, phone, sex, id_number, avatar, create_time)
         values (#{openid},#{name},#{phone},#{sex},#{idNumber},#{avatar},#{createTime})
     </insert>
+    <select id="countByMap" resultType="java.lang.Integer">
+        select count(id) from user
+        //这里idea爆红是因为无法提前知道map的键，但运行没有问题，将来开发需要减少使用map
+        <where>
+            <if test="begin != null">
+                and create_time &gt;= #{begin}
+            </if>
+            <if test="end != null">
+                and create_time &lt;= #{end}
+            </if>
+        </where>
+    </select>
 </mapper>

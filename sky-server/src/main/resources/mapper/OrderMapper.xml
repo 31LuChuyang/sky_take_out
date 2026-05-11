@@ -60,12 +60,42 @@
                 and status = #{status}
             </if>
             <if test="beginTime != null">
-                and other_time &gt;= #{otherTime}
+                and order_time &gt;= #{orderTime}
             </if>
             <if test="endTime != null">
-                and other_time &lt;= #{otherTime}
+                and order_time &lt;= #{orderTime}
             </if>
         </where>
         order by order_time desc
+    </select>
+
+    //这里idea爆红是因为无法提前知道map的键，但运行没有问题，将来开发需要减少使用map
+    <select id="sumByMap" resultType="java.lang.Double">
+        select sum(amount) from orders
+        <where>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+            <if test="begin != null">
+                and order_time &gt;= #{begin}
+            </if>
+            <if test="end != null">
+                and order_time &lt;= #{end}
+            </if>
+        </where>
+    </select>
+    <select id="countByMap" resultType="java.lang.Integer">
+        select count(id) from orders
+        <where>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+            <if test="begin != null">
+                and order_time &gt;= #{begin}
+            </if>
+            <if test="end != null">
+                and order_time &lt;= #{end}
+            </if>
+        </where>
     </select>
 </mapper>
